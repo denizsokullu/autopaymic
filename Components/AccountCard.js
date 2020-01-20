@@ -9,6 +9,18 @@ const AccountCard = (props) => {
     return navigate('PayeeIndex', { id: data.id });
   }
 
+  let account = {};
+
+  if (data.bank_account !== null) {
+    account.name = data.bank_account.name;
+    let number = data.bank_account.account_number;
+    account.last4 =  number.substr(number.length - 4);
+  } else if (data.credit_card !== null) {
+    account.name = data.credit_card.name;
+    let number = data.credit_card.card_number;
+    account.last4 =  number.substr(number.length - 4);
+  }
+
   return (
     <TouchableWithoutFeedback onPress={goToItem} activeOpacity='1.0'>
       <View style={styles.outerContainer}>
@@ -16,19 +28,19 @@ const AccountCard = (props) => {
           <View style={styles.mainSection}>
             <View style={styles.leftSection}>
               <View style={{ flex: 4 }}>
-                <Text style={styles.accountName} ellipsizeMode='tail' numberOfLines={1}>{data.account.name}</Text>
+                <Text style={styles.accountName} ellipsizeMode='tail' numberOfLines={1}>{data.name}</Text>
               </View>
               <View style={{ flex: 2 }}>
-                <Text style={styles.accountType}>{data.account.type.toUpperCase()}</Text>
+                <Text style={styles.accountType}>{data.type.toUpperCase()}</Text>
               </View>
               <View style={{ flex: 4 }}>
-                <Text style={styles.occurance}>{data.occurance}</Text>
+                <Text style={styles.occurance}>{data.recurring_contract ? data.recurring_contract.duration_type : 'Due Now'}</Text>
               </View>
             </View>
             <View style={styles.rightSection}>
-              <Text style={{ textAlign: 'right' }}>{data.bankAccount.name} ****{data.bankAccount.last4}</Text>
+              <Text style={{ textAlign: 'right' }}>{account.name} ****{account.last4}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 }}>
-                <View style={{ marginRight: 32 }}>
+                {/* <View style={{ marginRight: 32 }}>
                 {
                   data.due.type == 'fixed'
                   ?
@@ -39,7 +51,7 @@ const AccountCard = (props) => {
                       <Text style={{ textAlign: 'right', fontSize: 14, fontWeight: '500' }}>avg ${data.due.average}</Text>
                     </View>
                 }
-                </View>
+                </View> */}
               </View>
               <View style={{ position: 'absolute', top: 40, right: 0 }}>
                   <Icon name="chevron-right" size={20}/>
