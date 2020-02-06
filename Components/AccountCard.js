@@ -5,6 +5,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const AccountCard = (props) => {
   const { navigate } = props.navigation;
   const { data } = props;
+
+  let amount;
+  if(data.single_time_contract) {
+    amount = data.single_time_contract.amount;
+  } else {
+    amount = data.recurring_contract.amount;
+  }
+
   const goToItem = () => {
     return navigate('PayeeIndex', { id: data.id });
   }
@@ -34,24 +42,16 @@ const AccountCard = (props) => {
                 <Text style={styles.accountType}>{data.type.toUpperCase()}</Text>
               </View>
               <View style={{ flex: 4 }}>
-                <Text style={styles.occurance}>{data.recurring_contract ? data.recurring_contract.duration_type : 'Due Now'}</Text>
+                <Text style={styles.occurance}>{data.recurring_contract ? `Due in ${data.recurring_contract.duration_amount} ${data.recurring_contract.duration_type}` : 'Due Now'}</Text>
               </View>
             </View>
             <View style={styles.rightSection}>
               <Text style={{ textAlign: 'right' }}>{account.name} ****{account.last4}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 12 }}>
-                {/* <View style={{ marginRight: 32 }}>
-                {
-                  data.due.type == 'fixed'
-                  ?
-                    <Text style={{ fontSize: 20, fontWeight: '500' }}>${data.due.amount}</Text>
-                  :
-                    <View >
-                      <Text style={{ textAlign: 'right', fontSize: 20, fontWeight: '500' }}>Pay Full</Text>
-                      <Text style={{ textAlign: 'right', fontSize: 14, fontWeight: '500' }}>avg ${data.due.average}</Text>
-                    </View>
-                }
-                </View> */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', height: 63}}>
+                <View style={{ marginRight: 32 }}>
+                  <Text style={{ fontSize: 20, fontWeight: '500' }}>${amount}</Text>
+                  {/* <Text style={{ textAlign: 'right', fontSize: 20, fontWeight: '500' }}>Pay Full</Text> */}
+                </View>
               </View>
               <View style={{ position: 'absolute', top: 40, right: 0 }}>
                   <Icon name="chevron-right" size={20}/>

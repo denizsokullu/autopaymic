@@ -16,6 +16,8 @@ class PayeeCreate extends React.Component {
     type: '',
     accountModalVisible: false,
     typeModalVisible: false,
+    paymentTypeModalVisible: false,
+    recurringPaymentTypeVisible: false,
     accounts: [],
     types: [
       'individual',
@@ -29,6 +31,18 @@ class PayeeCreate extends React.Component {
   }
 
   setTypeModalVisible(value) {
+    this.setState({typeModalVisible: value});
+  }
+
+  setPaymentTypeModalVisible(value) {
+    this.setState({paymentTypeModalVisible: value});
+  }
+
+  setRecurringPaymentTypeVisible(value) {
+    this.setState({recurringPaymentTypeVisible: value});
+  }
+
+  setPaymentType(value) {
     this.setState({typeModalVisible: value});
   }
 
@@ -53,14 +67,12 @@ class PayeeCreate extends React.Component {
     });
   }
 
-
-
   render() {
     return (
       <SafeAreaView style={styles.container}>
         <View>
           <Formik
-            initialValues={{ name: '', paymentAccount: null, amount: '0' }}
+            initialValues={{ name: '', paymentAccount: null, amount: '0', paymentType: '', recurringPaymentType: '' }}
             onSubmit={this.createPayee.bind(this)}
           >
             {({ handleChange, handleBlur, handleSubmit, values, setFieldValue }) => (
@@ -72,8 +84,82 @@ class PayeeCreate extends React.Component {
                     onBlur={handleBlur('name')}
                     value={values.name}
                     style={styles.textInput}
+                    maxLength={40}
+                    textContentType='name'
                   />
                 </View>
+                <View>
+                  <Text style={styles.inputLabel}>Payment Type</Text>
+                  <TouchableWithoutFeedback onPress={() => {this.setPaymentTypeModalVisible(true)}}>
+                    <View style={styles.textInput}>
+                      <Text>{values.paymentType ? values.paymentType : 'Tap here to select payment type'}</Text>
+                    </View>
+                    <View>
+                      <Modal
+                        animationType="slide"
+                        transparent={false}
+                        visible={this.state.paymentTypeModalVisible}
+                        >
+                        <View style={{marginTop: 22}}>
+                          <View>
+                              <Picker
+                            selectedValue={values.paymentType ? values.paymentType : null}
+                            style={styles.pickerItem}
+                            onValueChange={(itemValue, itemIndex) => {
+                              setFieldValue('paymentType', itemValue);
+                              this.setState({paymentTypeModalVisible: false})
+                            }}>
+                                <Picker.Item label='' value=''/>
+                                <Picker.Item label='Recurring' value='Recurring'/>
+                                <Picker.Item label='Single Time' value='Single Time'/>
+                            </Picker>
+                          </View>
+                        </View>
+                      </Modal>
+                    </View>
+                  </TouchableWithoutFeedback>
+                </View>
+                {
+                  values.paymentType == 'Recurring' ?
+
+                  <View>
+                    <Text style={styles.inputLabel}>Recurring each</Text>
+                    <TouchableWithoutFeedback onPress={() => {this.setRecurringPaymentTypeVisible(true)}}>
+                      <View style={styles.textInput}>
+                        <Text>{values.recurringPaymentType ? values.recurringPaymentType : 'Tap here to select recurrence type'}</Text>
+                      </View>
+                      <View>
+                        <Modal
+                          animationType="slide"
+                          transparent={false}
+                          visible={this.state.recurringPaymentTypeVisible}
+                          >
+                          <View style={{marginTop: 22}}>
+                            <View>
+                                <Picker
+                              selectedValue={values.recurringPaymentType ? values.recurringPaymentType : null}
+                              style={styles.pickerItem}
+                              onValueChange={(itemValue, itemIndex) => {
+                                setFieldValue('recurringPaymentType', itemValue);
+                                this.setState({recurringPaymentTypeVisible: false})
+                              }}>
+                                  <Picker.Item label='' value=''/>
+                                  <Picker.Item label='Daily' value='Day'/>
+                                  <Picker.Item label='Weekly' value='Week'/>
+                                  <Picker.Item label='Bi-weekly' value='Every other week'/>
+                                  <Picker.Item label='Monthly' value='Every month'/>
+                                  <Picker.Item label='Semi-annualy' value='Twice a year'/>
+                                  <Picker.Item label='Annually' value='Every year'/>
+                              </Picker>
+                            </View>
+                          </View>
+                        </Modal>
+                      </View>
+                    </TouchableWithoutFeedback>
+                  </View>
+
+                  : null
+                }
                 <View>
                   <Text style={styles.inputLabel}>Payment Amount</Text>
                   <TextInput
@@ -81,6 +167,8 @@ class PayeeCreate extends React.Component {
                     onBlur={handleBlur('amount')}
                     value={values.amount}
                     style={styles.textInput}
+                    maxLength={10}
+                    keyboardType='decimal-pad'
                   />
                 </View>
                 <View>
@@ -104,11 +192,13 @@ class PayeeCreate extends React.Component {
                               setFieldValue('paymentAccount', this.state.accounts[itemIndex])
                               this.setState({accountModalVisible: false})
                             }}>
+                               <Picker.Item label='' value=''/>
                                 {
                                   this.state.accounts.map(account => {
                                     return <Picker.Item label={account.name} value={account.name} key={account.list_id}/>
                                   })
                                 }
+
                             </Picker>
                           </View>
                         </View>
@@ -137,6 +227,7 @@ class PayeeCreate extends React.Component {
                               setFieldValue('type', itemValue)
                               this.setState({typeModalVisible: false})
                             }}>
+                              <Picker.Item label='' value=''/>
                                 {
                                   this.state.types.map((type, id) => {
                                     return <Picker.Item label={type.charAt(0).toUpperCase() + type.substring(1)} value={type} key={id}/>
@@ -181,7 +272,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pickerItem: {
-    height: 100,
+    height: 22,
     // width: 300,
   },
   textInput: {

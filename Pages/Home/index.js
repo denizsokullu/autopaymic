@@ -30,10 +30,10 @@ export default class Home extends React.Component {
         <View style={styles.topSection}>
           <View style={styles.sectionLeft}>
             <Text style={styles.topText}>
-              Total this month for 8 payees: $4250
+            {`Total next month: $${parseInt(Math.random() * 2000 + 2000)}`}
             </Text>
             <Text style={styles.topText}>
-              Total next month for 10 payees: $4600
+              {`Total next month: $${parseInt(Math.random() * 8000 + 2000)}~`}
             </Text>
           </View>
           <View style={styles.sectionRight}>

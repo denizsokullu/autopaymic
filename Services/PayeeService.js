@@ -22,4 +22,12 @@ async function createPayee(data) {
   return await response.json();
 }
 
-export { payees, payee, createPayee }
+async function removePayee(id) {
+  const response = await fetch(`${baseUrl}/payee/${id}`, {
+    method: 'DELETE',
+  });
+  return await response;
+}
+
+
+export { payees, payee, createPayee, removePayee }
